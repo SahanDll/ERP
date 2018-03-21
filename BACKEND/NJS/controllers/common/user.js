@@ -1,10 +1,9 @@
 var express = require('express');
 var router = express.Router();
-var mongo = require('../data_source/mongo');
-var UserData = mongo.getUserData();
+var userData = require('../../data_source/mongodb/schema/userData');
 
 router.get('/get-user-all', function (req, res, next) {
-    UserData.find()
+    userData.getUserData().find()
         .then(function (doc) {
             if(doc){
                 res.send(JSON.stringify(doc));
@@ -12,10 +11,13 @@ router.get('/get-user-all', function (req, res, next) {
                 res.json({error: 'Server Error'});
             }
         })
+        .catch(function(err){
+            res.json({error: err});
+        });
 });
 
 router.get('/get-user-name', function (req, res, next) {
-    UserData.find({ userName: req.query.userName})
+    userData.getUserData().find({ userName: req.query.userName})
         .then(function (doc) {
             if(doc){
                 res.send(JSON.stringify(doc));
@@ -23,6 +25,9 @@ router.get('/get-user-name', function (req, res, next) {
                 res.json({error: 'User not found'});
             }
         })
+        .catch(function(err){
+            res.json({error: err});
+        });
 });
 
 router.post('/add-user', function (req, res, next) {
@@ -32,9 +37,14 @@ router.post('/add-user', function (req, res, next) {
         role: req.body.role,
         created: new Date()
     };
-    var data = mongo.createUserData(user);
-    data.save();
-    res.json({message: 'User created successfully'});
+    var data = userData.getUserData().createUserData(user);
+    data.save(function(err) {
+        if (err) {
+            res.json(500, {message: 'User create failed'});
+        } else {
+            res.json(200, {message: 'User create success'});
+        }
+    });
 });
 
 

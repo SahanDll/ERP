@@ -1,6 +1,6 @@
-var mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost:27017/test');
-var Schema = mongoose.Schema;
+var mongo = require('../mongo');
+
+var Schema = mongo.getSchema();
 
 var userDataSchema = new Schema({
     userName: {type: String, required: true},
@@ -9,7 +9,7 @@ var userDataSchema = new Schema({
     created: {type: Date, required: true}
 }, {collection: 'userData'});
 
-var UserData = mongoose.model('UserData', userDataSchema);
+var UserData = mongo.getMongoose().model('UserData', userDataSchema);
 
 function getUserData() {
     return UserData;

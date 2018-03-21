@@ -8,8 +8,8 @@ var jwt    = require('jsonwebtoken');
 
 var index = require('./routes/index');
 var users = require('./routes/users');
-var login = require('./controllers/login');
-var user = require('./controllers/user');
+var login = require('./controllers/common/login');
+var user = require('./controllers/common/user');
 
 var app = express();
 
@@ -37,6 +37,7 @@ app.use(function(req, res, next) {
             if (err) {
                 return res.json({ success: false, message: 'Token Expired'});
             } else {
+                console.log(decoded);
                 req.decoded = decoded;
                 next();
             }
